@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>ArtGallery - Quản Trị Tác Phẩm</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-black text-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top museum-nav" aria-label="Thanh điều hướng chính">
+        <div class="container-fluid px-4 px-lg-5">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <span class="fs-4 font-cinzel fw-bold tracking-wider">MUSEUM<span class="text-gold">.</span></span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#menuDieuHuong" aria-controls="menuDieuHuong" aria-expanded="false" aria-label="Mở menu">
+                <i class="bi bi-list fs-1"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="menuDieuHuong">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-uppercase tracking-wide text-sm">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Bộ Sưu Tập</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="admin.html">Quản Trị</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="hopThoaiDangNhap" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="tieuDeDangNhap" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title font-cinzel" id="tieuDeDangNhap">Đăng nhập Hệ Thống</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="bieuMauDangNhap">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-gold">Vai trò truy cập</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check flex-fill p-3 border border-secondary border-opacity-25 rounded bg-dark bg-opacity-25">
+                                    <input class="form-check-input ms-0 me-2" type="radio" name="vaiTro" id="vaiTroAdmin" value="admin" checked>
+                                    <label class="form-check-label text-light fw-medium" for="vaiTroAdmin">
+                                        Quản Trị Viên
+                                    </label>
+                                </div>
+                                <div class="form-check flex-fill p-3 border border-secondary border-opacity-25 rounded bg-dark bg-opacity-25">
+                                    <input class="form-check-input ms-0 me-2" type="radio" name="vaiTro" id="vaiTroKhach" value="khach">
+                                    <label class="form-check-label text-light fw-medium" for="vaiTroKhach">
+                                        Khách Hàng
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4" id="vungMatKhau">
+                            <label for="matKhau" class="form-label">Mật khẩu Admin <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="matKhau" required placeholder="Nhập mật khẩu...">
+                            <div class="invalid-feedback">Mật khẩu không đúng.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2">Đăng Nhập</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Main Content -->
+    <main class="container my-5 d-none" id="vungQuanTri" role="main">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <h1 class="h2 font-playfair mb-0">Quản Lý Tác Phẩm</h1>
+                <span id="nhanVaiTro" class="badge bg-secondary bg-opacity-25 text-gold border border-gold border-opacity-50 px-3 py-2 font-cinzel">Vai trò</span>
+            </div>
+            <div class="d-flex gap-2">
+                <button id="nutThemTacPham" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#hopThoaiTacPham" onclick="chuanBiThemTacPham()">
+                    <i class="bi bi-plus-circle me-1" aria-hidden="true"></i> Thêm Tác Phẩm
+                </button>
+                <button class="btn btn-outline-warning" onclick="dangXuat()">
+                    <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Đăng Xuất
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 80px">Ảnh</th>
+                        <th scope="col">Tên Tác Phẩm</th>
+                        <th scope="col">Họa Sĩ</th>
+                        <th scope="col">Năm</th>
+                        <th scope="col">Phong Cách</th>
+                        <th scope="col" class="text-center">Thích</th>
+                        <th scope="col" class="text-end">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody id="bangTacPham" aria-live="polite">
+                    <!-- Data injected via JS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modal CRUD (Add/Edit) -->
+    <div class="modal fade" id="hopThoaiTacPham" tabindex="-1" aria-labelledby="tieuDeHopThoai" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title font-playfair" id="tieuDeHopThoai">Thêm Tác Phẩm</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="bieuMauTacPham" class="needs-validation" novalidate>
+                        <input type="hidden" id="idTacPham">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="mb-3">
+                                    <label for="tenTacPham" class="form-label">Tên tác phẩm <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="tenTacPham" required>
+                                    <div class="invalid-feedback">Vui lòng nhập tên tác phẩm.</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tenHoaSi" class="form-label">Tên họa sĩ <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="tenHoaSi" required>
+                                        <div class="invalid-feedback">Vui lòng nhập tên họa sĩ.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="namSangTac" class="form-label">Năm sáng tác <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="namSangTac" required min="1000" max="2099">
+                                        <div class="invalid-feedback">Vui lòng nhập năm hợp lệ.</div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phongCach" class="form-label">Phong cách <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="phongCach" required>
+                                        <option value="">Chọn phong cách...</option>
+                                        <option value="HienDai">Hiện Đại</option>
+                                        <option value="CoDien">Cổ Điển</option>
+                                        <option value="TruuTuong">Trừu Tượng</option>
+                                    </select>
+                                    <div class="invalid-feedback">Vui lòng chọn phong cách.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="moTa" class="form-label">Mô tả chi tiết</label>
+                                    <textarea class="form-control bg-dark text-light border-secondary" id="moTa" rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="mb-3">
+                                    <label for="duongDanAnh" class="form-label">Đường dẫn ảnh (URL) <span class="text-danger">*</span></label>
+                                    <input type="url" class="form-control" id="duongDanAnh" required placeholder="https://example.com/image.jpg" oninput="xemTruocAnh(this.value)">
+                                    <div class="invalid-feedback">Vui lòng nhập URL ảnh hợp lệ.</div>
+                                </div>
+                                <div class="card bg-secondary bg-opacity-25 border-secondary h-100 min-h-200px d-flex align-items-center justify-content-center text-center p-2">
+                                    <img id="anhXemTruoc" src="img/placeholder.svg" alt="Xem trước ảnh" class="img-fluid rounded d-none" style="max-height: 250px; object-fit: contain;">
+                                    <span id="chuThichAnhXemTruoc" class="text-secondary"><i class="bi bi-image" aria-hidden="true"></i><br>Ảnh xem trước</span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" form="bieuMauTacPham" class="btn btn-primary" id="nutLuuTacPham">Lưu Tác Phẩm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Delete Confirmation -->
+    <div class="modal fade" id="hopThoaiXoa" tabindex="-1" aria-labelledby="tieuDeXoa" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content bg-dark border-secondary">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title font-playfair text-danger" id="tieuDeXoa"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i> Xác nhận xóa</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa tác phẩm này? Hành động này không thể hoàn tác.
+                    <input type="hidden" id="idXoa">
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger" onclick="thucHienXoaTacPham()">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner & Toast Container -->
+    <div id="manHinhCho" class="loading-overlay d-none" aria-busy="true" aria-label="Đang tải dữ liệu">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Đang tải...</span>
+        </div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="vungThongBao"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
